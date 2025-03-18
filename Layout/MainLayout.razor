@@ -1,0 +1,31 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="page">
+    <main>
+        <MudAppBar Color="@(_isDarkMode ? Color.Dark : Color.Primary)" Class="px-4" >
+            <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" T="bool" Label="Toggle Light/Dark Mode" />
+
+            <div class="nav-links d-flex">
+                <NavLink class="nav-link" style="color: white" href=""> Home </NavLink>
+                <NavLink class="nav-link" style="color: white" href="movies-card"> Movies Card </NavLink>
+                <NavLink class="nav-link" style="color: white" href="movies-grid"> Movies Grid </NavLink>
+            </div>
+        </MudAppBar>
+
+        <MudMainContent>
+            <article class="content px-4">
+                @Body
+            </article>
+        </MudMainContent>
+    </main>
+</div>
+
+@code{
+    private MudTheme _theme = new();
+    private bool _isDarkMode;
+}

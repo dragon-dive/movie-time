@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<PageTitle>Movies Index</PageTitle>
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; width: 93vw">
+    <h1 style="padding-bottom: 30px;">Welcome to the Blazor Movies App!</h1>
+
+    <div style="display:block flex;">
+        <div style="padding-right: 80px;">
+            <NavLink class="nav-link" href="movies-card">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Go to MudCard Page</MudButton>
+            </NavLink>
+        </div>
+
+        <div>
+            <NavLink class="nav-link" href="movies-grid">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Go to MudGrid Page</MudButton>
+            </NavLink>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,124 @@
+@page "/movies-grid"
+@attribute [StreamRendering]
+@inject HttpClient Http
+
+<PageTitle>Movies Grid</PageTitle>
+
+@if (FilteredMovies == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>Welcome to the 1980s! Enjoy the Show!</h1>
+
+    <MudGrid Spacing="2" Class="mb-3">
+
+        <MudItem xs="12" sm="6" md="5">
+            <MudTextField Label="Search For" @bind-Value="FilterValue" Variant="Variant.Outlined" FullWidth="true"></MudTextField>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="5">
+            <MudSelect T="string" Label="Filter By" @bind-Value="FilterColumnKey" Variant="Variant.Outlined" FullWidth="true">
+                @foreach (var filterType in Filters)
+                {
+                    <MudSelectItem Value="@filterType">@filterType</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+        <MudItem xs="12" sm="12" md="2" Class="d-flex align-center">
+            <MudButton Variant="Variant.Filled" OnClick="FilterMovies" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search">Apply</MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="ResetMoviesAndFilters" StartIcon="@Icons.Material.Filled.Clear" Color="Color.Error" Class="ml-2">Reset</MudButton>
+        </MudItem>
+    </MudGrid>
+
+    <MudGrid Spacing="@Spacing" Justify="Justify.Center">
+        @foreach (var movie in FilteredMovies)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudCard Class="movie-card">
+                    <MudCardMedia Class="movie-poster"
+                                  Image="@(string.IsNullOrWhiteSpace(movie.Thumbnail) ? "images/defaultprojector.webp" : movie.Thumbnail)"
+                                  Height="300"
+                                  Width="100%" />
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@movie.Title</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent Class="card-content">
+                        <MudText><b>Release Year:</b> <i>@movie.Year</i></MudText>
+                        <MudText><b>Cast:</b> <i>@(string.Join(", ", @movie.Cast))</i></MudText>
+                        <MudText><b>Genres:</b> <i>@(string.Join(", ", @movie.Genres))</i></MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+@code {
+    private Movie[] AllMovies;
+    private Movie[] FilteredMovies;
+
+    private List<string> Filters;
+    private string FilterColumnKey;
+    private string FilterValue;
+
+    private int Spacing { get; set; } = 3;
+    private int PaperHeight { get; set; } = 300;
+    private int PaperWidth { get; set; } = 150;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllMovies = await Http.GetFromJsonAsync<Movie[]>("https://raw.githubusercontent.com/prust/wikipedia-movie-data/refs/heads/master/movies-1980s.json");
+        FilteredMovies = AllMovies;
+        Filters = new List<string> { "TITLE", "CAST", "GENRE", "RELEASEDATE" };
+    }
+
+    public void FilterMovies()
+    {
+        var Query = AllMovies.AsQueryable();
+
+        if (!string.IsNullOrEmpty(FilterColumnKey) && !string.IsNullOrEmpty(FilterValue))
+        {
+            if (FilterColumnKey.Equals("TITLE"))
+            {
+                Query = Query.Where(movie => movie.Title.Contains(FilterValue, StringComparison.CurrentCultureIgnoreCase));
+                FilteredMovies = Query.ToArray();
+            }
+            else if (FilterColumnKey.Equals("CAST"))
+            {
+                Query = Query.Where(movie => movie.Cast.Any(castMember => castMember.Contains(FilterValue, StringComparison.CurrentCultureIgnoreCase)));
+                FilteredMovies = Query.ToArray();
+            }
+            else if (FilterColumnKey.Equals("GENRE"))
+            {
+                Query = Query.Where(movie => movie.Genres.Any(genre => genre.Contains(FilterValue, StringComparison.CurrentCultureIgnoreCase)));
+                FilteredMovies = Query.ToArray();
+            }
+            else if (FilterColumnKey.Equals("RELEASEDATE"))
+            {
+                Query = Query.Where(movie => movie.Year.ToString().Contains(FilterValue, StringComparison.CurrentCultureIgnoreCase));
+                FilteredMovies = Query.ToArray();
+            }
+        }
+    }
+
+    public void ResetMoviesAndFilters()
+    {
+        FilterColumnKey = "";
+        FilterValue = "";
+        FilteredMovies = AllMovies;
+    }
+
+    public class Movie
+    {
+        public string Title { get; set; }
+        public int Year { get; set; }
+        public List<string> Cast { get; set; }
+        public List<string> Genres { get; set; }
+        public string Thumbnail { get; set; }
+    }
+}
