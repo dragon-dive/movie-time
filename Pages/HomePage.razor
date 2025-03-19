@@ -2,20 +2,29 @@
 
 <PageTitle>Movies Index</PageTitle>
 
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; width: 93vw">
-    <h1 style="padding-bottom: 30px;">Welcome to the Blazor Movies App!</h1>
+<div class="home-main-container">
+    <img src="images/defaultprojector.webp" class="home-img"/>
 
-    <div style="display:block flex;">
-        <div style="padding-right: 80px;">
+    <h1 class="home-heading">Welcome to the Blazor Movies App!</h1>
+
+    <div class="home-button-container-wrapper">
+        <div class="home-button-container">
             <NavLink class="nav-link" href="movies-card">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary">Go to MudCard Page</MudButton>
+                <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary">Go to MudCard Page</MudButton>
             </NavLink>
-        </div>
 
-        <div>
-            <NavLink class="nav-link" href="movies-grid">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary">Go to MudGrid Page</MudButton>
-            </NavLink>
+
+            <div>
+                <NavLink class="nav-link" href="movies-grid">
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary">Go to MudGrid Page</MudButton>
+                </NavLink>
+            </div>
+
+            <div>
+                <NavLink class="nav-link" href="movies-datagrid">
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary">Go to Mud-DataGrid Page</MudButton>
+                </NavLink>
+            </div>
         </div>
     </div>
 </div>

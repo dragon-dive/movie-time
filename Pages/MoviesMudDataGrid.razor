@@ -1,0 +1,103 @@
+﻿@page "/movies-datagrid"
+
+@attribute [StreamRendering]
+@inject HttpClient Http
+
+<PageTitle>Movies Card</PageTitle>
+
+@if (FilteredMovies == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+
+<div class="datagrid-container">
+    <MudCard Class="datagrid-card">
+        <MudCardContent Class="datagrid-content">
+            <MudDataGrid T="Movie" Items="@FilteredMovies" Filterable="true"
+                         QuickFilter="@_quickFilter" Hideable="true" RowClick="@RowClicked"
+                         MultiSelection="true" SortMode="SortMode.Multiple"
+                         Hover="true" Dense="true" ColumnResizeMode="ResizeMode.Column"
+                         >
+
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Movies List</MudText>
+                    <MudSpacer />
+                    <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start"
+                                  Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search"
+                                  IconSize="Size.Medium" Class="mt-0"
+                                  ></MudTextField>
+                </ToolBarContent>
+
+                <Columns>
+                    <HierarchyColumn T="Movie" ButtonDisabledFunc="@(x => false)" InitiallyExpandedFunc="@(x => false)" />
+
+                    <PropertyColumn Property="movie => movie.Title" Title="Title" />
+                    <PropertyColumn Property="movie => movie.Year" Title="Year" />
+                    <PropertyColumn Property="movie => GetGenres(movie)" Title="Genre" />
+                    <PropertyColumn Property="movie => GetCast(movie)" Title="Cast" />
+                </Columns>
+
+                <ChildRowContent Context="context">
+                    <MudPaper Class="pa-4 d-flex align-center">
+                        <MudImage Src="@context.Item.Thumbnail" Width="100" Height="100" />
+                        <div class="ml-4">
+                            <MudText Typo="Typo.subtitle1">@context.Item.Title (@context.Item.Year)</MudText>
+                            <MudText Typo="Typo.body2"><strong>Genres:</strong> @GetGenres(context.Item)</MudText>
+                            <MudText Typo="Typo.body2"><strong>Cast:</strong> @GetCast(context.Item)</MudText>
+                        </div>
+                    </MudPaper>
+                </ChildRowContent>
+             
+                <PagerContent>
+                    <MudDataGridPager T="Movie" />
+                </PagerContent>
+            </MudDataGrid>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+}
+
+@code {
+    private Movie[] AllMovies;
+    private Movie[] FilteredMovies;
+    private string _searchString;
+
+    private string FilterValue;
+    private string FilterColumnKey;
+
+    private string GetGenres(Movie movie) => string.Join(", ", movie.Genres);
+    private string GetCast(Movie movie) => string.Join(", ", movie.Cast);
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllMovies = await Http.GetFromJsonAsync<Movie[]>("https://raw.githubusercontent.com/prust/wikipedia-movie-data/refs/heads/master/movies-1980s.json");
+        FilteredMovies = AllMovies;
+    }
+
+    private Func<Movie, bool> _quickFilter => movie =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        return movie.Title.Contains(_searchString, StringComparison.OrdinalIgnoreCase) ||
+               movie.Cast.Any(cast => cast.Contains(_searchString, StringComparison.OrdinalIgnoreCase)) ||
+               movie.Genres.Any(genre => genre.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
+    };
+
+    private void RowClicked(DataGridRowClickEventArgs<Movie> args)
+    {
+        Console.WriteLine($"Clicked on: {args.Item.Title}");
+    }
+
+    public class Movie
+    {
+        public string Title { get; set; }
+        public int Year { get; set; }
+        public List<string> Cast { get; set; }
+        public List<string> Genres { get; set; }
+        public string Thumbnail { get; set; }
+    }
+}

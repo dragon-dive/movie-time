@@ -1,0 +1,30 @@
+﻿.home-main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    width: 93vw;
+    margin-top: -32px;
+}
+
+.home-heading {
+    padding-bottom: 30px;
+}
+
+.home-button-container-wrapper {
+    display: flex;
+    width: 60%
+}
+
+.home-button-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap:10px;
+}
+
+.home-img {
+    height: 32%;
+}

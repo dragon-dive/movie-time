@@ -1,0 +1,52 @@
+﻿.datagrid-card {
+    display: flex;
+    flex-direction: column;
+    height: 86vh;
+    margin: 8px 0px 16px 0px;
+}
+
+.datagrid-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.mud-data-grid {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.mud-data-grid .mud-table-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+}
+
+.mud-data-grid .mud-table-body {
+        flex-grow: 1;
+        overflow-y: auto;
+}
+
+.mud-data-grid .mud-table-footer {
+        flex-shrink: 0;
+}
+
+.mud-drop-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.mud-table-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+}
+
